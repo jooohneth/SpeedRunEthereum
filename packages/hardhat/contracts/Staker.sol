@@ -12,6 +12,9 @@ contract Staker {
       exampleExternalContract = ExampleExternalContract(exampleExternalContractAddress);
   }
 
+  uint public constant THRESHOLD = 1 ether;
+  uint public DEADLINE = block.timestamp + 2 days;
+
   // Collect funds in a payable `stake()` function and track individual `balances` with a mapping:
   // ( Make sure to add a `Stake(address,uint256)` event and emit it for the frontend <List/> display )
 
