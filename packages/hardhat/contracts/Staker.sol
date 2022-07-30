@@ -31,6 +31,14 @@ contract Staker {
   // After some `deadline` allow anyone to call an `execute()` function
   // If the deadline has passed and the threshold is met, it should call `exampleExternalContract.complete{value: address(this).balance}()`
 
+  function execute() public {
+
+    require(timeLeft() == 0, "Cannot call 'execute' before the deadline ends!");
+    require(address(this).balance >= THRESHOLD, "Cannot call 'execute', threshold not met!");
+
+    (bool success, ) = address(exampleExternalContract).call{value: address(this).balance}(abi.encodeWithSignature("complete()")); 
+    require(success, "function 'complete' failed!");
+  }
 
   // If the `threshold` was not met, allow everyone to call a `withdraw()` function
 
@@ -40,6 +48,9 @@ contract Staker {
 
   // Add a `timeLeft()` view function that returns the time left before the deadline for the frontend
 
+  function timeLeft() public view returns(uint){
+    return DEADLINE >= block.timestamp ? DEADLINE - block.timestamp : 0;
+  }
 
   // Add the `receive()` special function that receives eth and calls stake()
 
