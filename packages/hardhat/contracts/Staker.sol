@@ -41,9 +41,20 @@ contract Staker {
   }
 
   // If the `threshold` was not met, allow everyone to call a `withdraw()` function
-
-
   // Add a `withdraw()` function to let users withdraw their balance
+
+  function withdraw(address payable staker) public {
+
+    uint stakerBalance = balances[staker];
+
+    require(timeLeft() == 0, "Cannot call 'withdraw' before the deadline ends!");
+    require(stakerBalance > 0, "No ETH staked!");
+
+    balances[staker] = 0;
+
+    (bool success, ) = staker.call{value: stakerBalance}("");
+    require(success, "function 'withdraw' failed!");
+  }
 
 
   // Add a `timeLeft()` view function that returns the time left before the deadline for the frontend
