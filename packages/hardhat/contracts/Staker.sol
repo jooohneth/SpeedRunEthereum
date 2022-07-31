@@ -13,7 +13,7 @@ contract Staker {
   }
 
   uint public constant THRESHOLD = 1 ether;
-  uint public DEADLINE = block.timestamp + 1 minutes;
+  uint public DEADLINE = block.timestamp + 48 hours;
 
   //Created a modifier to prevent participants to stake after the contract has executed! Preventing funds trapped inside the contract.
 
@@ -76,6 +76,7 @@ contract Staker {
   }
 
   // Add the `receive()` special function that receives eth and calls stake()
+  //eslint-ignore-next-line
   function receive() public payable {
     stake(); 
   }
