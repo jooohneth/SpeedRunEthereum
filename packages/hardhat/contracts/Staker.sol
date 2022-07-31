@@ -15,6 +15,15 @@ contract Staker {
   uint public constant THRESHOLD = 1 ether;
   uint public DEADLINE = block.timestamp + 1 minutes;
 
+  //Created a modifier to prevent participants to stake after the contract has executed! Preventing funds trapped inside the contract.
+
+  bool public complete = false;
+
+  modifier notCompleted{
+    require(complete == false, "Function executed, can't stake/withdraw after execution!");
+    _;
+  }
+
   // Collect funds in a payable `stake()` function and track individual `balances` with a mapping:
   // ( Make sure to add a `Stake(address,uint256)` event and emit it for the frontend <List/> display )
 
@@ -22,7 +31,7 @@ contract Staker {
 
   mapping(address => uint) public balances;
 
-  function stake() public payable {
+  function stake() public payable notCompleted {
     balances[msg.sender] += msg.value;
 
     emit Stake(msg.sender, msg.value);
@@ -38,6 +47,8 @@ contract Staker {
 
     (bool success, ) = address(exampleExternalContract).call{value: address(this).balance}(abi.encodeWithSignature("complete()")); 
     require(success, "function 'complete' failed!");
+
+    complete = true; 
   }
 
   // If the `threshold` was not met, allow everyone to call a `withdraw()` function
@@ -54,6 +65,7 @@ contract Staker {
 
     (bool success, ) = msg.sender.call{value: stakerBalance}("");
     require(success, "function 'withdraw' failed!");
+
   }
 
 
