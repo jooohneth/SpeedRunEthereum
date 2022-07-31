@@ -13,7 +13,7 @@ contract Staker {
   }
 
   uint public constant THRESHOLD = 1 ether;
-  uint public DEADLINE = block.timestamp + 2 days;
+  uint public DEADLINE = block.timestamp + 1 minutes;
 
   // Collect funds in a payable `stake()` function and track individual `balances` with a mapping:
   // ( Make sure to add a `Stake(address,uint256)` event and emit it for the frontend <List/> display )
@@ -43,16 +43,16 @@ contract Staker {
   // If the `threshold` was not met, allow everyone to call a `withdraw()` function
   // Add a `withdraw()` function to let users withdraw their balance
 
-  function withdraw(address payable staker) public {
+  function withdraw() public {
 
-    uint stakerBalance = balances[staker];
+    uint stakerBalance = balances[msg.sender];
 
     require(timeLeft() == 0, "Cannot call 'withdraw' before the deadline ends!");
     require(stakerBalance > 0, "No ETH staked!");
 
-    balances[staker] = 0;
+    balances[msg.sender] = 0;
 
-    (bool success, ) = staker.call{value: stakerBalance}("");
+    (bool success, ) = msg.sender.call{value: stakerBalance}("");
     require(success, "function 'withdraw' failed!");
   }
 
@@ -64,7 +64,7 @@ contract Staker {
   }
 
   // Add the `receive()` special function that receives eth and calls stake()
-  function receive() public {
+  function receive() public payable {
     stake(); 
   }
 
