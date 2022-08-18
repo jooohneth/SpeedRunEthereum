@@ -32,6 +32,8 @@ contract Staker {
   mapping(address => uint) public balances;
 
   function stake() public payable notCompleted {
+    require(timeLeft() > 0, "The time is over, you can't stake");
+
     balances[msg.sender] += msg.value;
 
     emit Stake(msg.sender, msg.value);
